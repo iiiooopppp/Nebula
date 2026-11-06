@@ -1,0 +1,38 @@
+cmake_minimum_required(VERSION 3.22)
+
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+project(Nebula VERSION 1.0.0)
+
+include(FetchContent)
+FetchContent_Declare(JUCE
+    GIT_REPOSITORY https://github.com/juce-framework/JUCE.git
+    GIT_TAG 7.0.12
+    GIT_SHALLOW ON)
+FetchContent_MakeAvailable(JUCE)
+
+juce_add_plugin(Nebula
+    COMPANY_NAME "Skyline"
+    PLUGIN_MANUFACTURER_CODE Skyl
+    PLUGIN_CODE Nbla
+    FORMATS VST3
+    PRODUCT_NAME "Nebula"
+    IS_SYNTH TRUE
+    NEEDS_MIDI_INPUT TRUE
+    NEEDS_MIDI_OUTPUT FALSE
+    COPY_PLUGIN_AFTER_BUILD FALSE
+    VST3_CATEGORIES Instrument Synth)
+
+juce_generate_juce_header(Nebula)
+
+target_sources(Nebula PRIVATE Plugin.cpp)
+
+target_compile_definitions(Nebula PUBLIC
+    JUCE_WEB_BROWSER=0
+    JUCE_USE_CURL=0
+    JUCE_VST3_CAN_REPLACE_VST2=0)
+
+target_link_libraries(Nebula
+    PRIVATE juce::juce_audio_utils
+    PUBLIC juce::juce_recommended_config_flags
+           juce::juce_recommended_lto_flags)
